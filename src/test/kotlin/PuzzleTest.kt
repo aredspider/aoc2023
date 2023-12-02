@@ -13,7 +13,7 @@ abstract class PuzzleTest {
 
     private val name = this::class.simpleName!!.lowercase().removeSuffix("test")
     private val inputSample1 by lazy { readFile("${name}sample1.txt") }
-    private val inputSample2 by lazy { readFile("${name}sample2.txt") }
+    private val inputSample2 by lazy { try { readFile("${name}sample2.txt") } catch (e: FileNotFoundException) { inputSample1 } }
     private val input by lazy { readFile("$name.txt") }
 
     @Test

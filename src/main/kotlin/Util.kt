@@ -1,12 +1,33 @@
-fun List<String>.getOrNull(pos: Pair<Int, Int>): Char? = getOrNull(pos.second)?.getOrNull(pos.first)
+typealias Coord = Pair<Int, Int>
 
-fun Pair<Int, Int>.adjacent() = listOf(
-    first - 1 to second - 1,
-    first to second - 1,
-    first + 1 to second - 1,
-    first - 1 to second,
-    first + 1 to second,
-    first - 1 to second + 1,
-    first to second + 1,
-    first + 1 to second + 1
-)
+inline val Coord.x get() = first
+inline val Coord.y get() = second
+
+fun List<String>.getOrNull(pos: Coord): Char? = getOrNull(pos.y)?.getOrNull(pos.x)
+infix fun Coord.isWithinRangeOf(area: List<String>): Boolean = y in area.indices && x in area[y].indices
+operator fun List<String>.get(pos: Coord): Char = get(pos.y)[pos.x]
+
+operator fun Coord.plus(other: Coord): Coord = x + other.x to y + other.y
+operator fun Coord.minus(other: Coord): Coord = x - other.x to y - other.y
+operator fun Coord.times(t: Int) = x * t to y * t
+
+val LEFT = -1 to 0
+val RIGHT = 1 to 0
+val UP = 0 to -1
+val DOWN = 0 to 1
+val LEFT_UP = -1 to -1
+val LEFT_DOWN = -1 to 1
+val RIGHT_UP = 1 to -1
+val RIGHT_DOWN = 1 to 1
+
+val Coord.left get() = this + LEFT
+val Coord.right get() = this + RIGHT
+val Coord.up get() = this + UP
+val Coord.down get() = this + DOWN
+val Coord.leftUp get() = this + LEFT_UP
+val Coord.leftDown get() = this + LEFT_DOWN
+val Coord.rightUp get() = this + RIGHT_UP
+val Coord.rightDown get() = this + RIGHT_DOWN
+
+val Coord.adjacent get() = listOf(left, right, up, down, leftUp, leftDown, rightUp, rightDown)
+val Coord.inverted get() = -x to -y

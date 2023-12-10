@@ -1,7 +1,8 @@
 object Day03 : Puzzle {
-    data class Part(val start: Pair<Int, Int>, val end: Pair<Int, Int>, val number: Int)
+    data class Part(val start: Coord, val end: Coord, val number: Int)
 
-    private fun String.parsePart(x: Int, y: Int): Part {
+    private fun String.parsePart(pos: Coord): Part {
+        val (x, y) = pos
         val pre = this.subSequence(0, x + 1).reversed().takeWhile { it.isDigit() }.reversed()
         val post = this.subSequence(x + 1, length).takeWhile { it.isDigit() }
         val number = (pre.toString() + post).toInt()
@@ -11,7 +12,7 @@ object Day03 : Puzzle {
     override fun part1(input: List<String>) = input.flatMapIndexed { y: Int, line: String ->
         line.flatMapIndexed { x, c ->
             if (!c.isDigit() && c != '.')
-                (x to y).adjacent().filter { input.getOrNull(it)?.isDigit() == true }.map { (x, y) -> input[y].parsePart(x, y) }
+                (x to y).adjacent.filter { input.getOrNull(it)?.isDigit() == true }.map { pos -> input[pos.y].parsePart(pos) }
             else
                 emptyList()
         }
@@ -22,8 +23,8 @@ object Day03 : Puzzle {
     override fun part2(input: List<String>) = input.flatMapIndexed { y: Int, line: String ->
         line.mapIndexedNotNull { x, c ->
             if (c == '*') {
-                val adjacentParts = (x to y).adjacent().filter { input.getOrNull(it)?.isDigit() == true }
-                    .map { (x, y) -> input[y].parsePart(x, y) }.distinct()
+                val adjacentParts = (x to y).adjacent.filter { input.getOrNull(it)?.isDigit() == true }
+                    .map { pos -> input[pos.y].parsePart(pos) }.distinct()
                 if (adjacentParts.size == 2)
                     adjacentParts[0].number * adjacentParts[1].number
                 else

@@ -1,6 +1,5 @@
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest.dynamicTest
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import java.io.FileNotFoundException
@@ -19,7 +18,7 @@ abstract class PuzzleTest {
     private fun getInputFileName(sample: Boolean = false, part: Int? = null, sampleNumber: Int? = null) =
         "$name${if (sample) "sample" else ""}${part ?: ""}${(sampleNumber?.takeIf { part != null }) ?: ""}.txt"
 
-    private fun readSampleInput(part: Int, sampleIndex: Int) =
+    fun readSampleInput(part: Int, sampleIndex: Int) =
         readFile(getInputFileName(true, part, sampleIndex + 1))
             ?: readFile(getInputFileName(true, part))
             ?: readFileOrThrow(getInputFileName(true))
@@ -27,7 +26,7 @@ abstract class PuzzleTest {
     private val input by lazy { readFileOrThrow(getInputFileName()) }
 
     @TestFactory
-    fun testSamplesPart1() =
+    open fun testSamplesPart1() =
         expectedSampleResultsPart1.mapIndexed { sampleIndex, expected ->
             dynamicTest("Part 1 Sample ${sampleIndex + 1}") {
                 assertThat(puzzle.part1(readSampleInput(part = 1, sampleIndex))).isEqualTo(expected)
@@ -35,7 +34,7 @@ abstract class PuzzleTest {
         }
 
     @TestFactory
-    fun testSamplePart2() =
+    open fun testSamplePart2() =
         expectedSampleResultsPart2.mapIndexed { sampleIndex, expected ->
             dynamicTest("Part 2 Sample ${sampleIndex + 1}") {
                 assertThat(puzzle.part2(readSampleInput(part = 2, sampleIndex))).isEqualTo(expected)

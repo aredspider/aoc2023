@@ -1,3 +1,5 @@
+import kotlin.math.absoluteValue
+
 typealias Coord = Pair<Int, Int>
 
 inline val Coord.x get() = first
@@ -31,3 +33,21 @@ val Coord.rightDown get() = this + RIGHT_DOWN
 
 val Coord.adjacent get() = listOf(left, right, up, down, leftUp, leftDown, rightUp, rightDown)
 val Coord.inverted get() = -x to -y
+
+fun Coord.manhattanDistance(to: Coord) = (x - to.x).absoluteValue + (y - to.y).absoluteValue
+
+fun List<String>.withCoords() =
+    flatMapIndexed { y: Int, row: String ->
+        row.mapIndexed { x: Int, value: Char ->
+            (x to y) to value
+        }
+    }
+
+infix fun Int.exclProgressionTo(b: Int) = if (this > b) (this - 1) downTo (b + 1) else (this + 1)..<b
+
+fun debugPrint(data: Collection<Collection<Any?>>) {
+    data.forEach { row ->
+        row.forEach(::print)
+        println()
+    }
+}

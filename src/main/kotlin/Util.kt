@@ -45,6 +45,24 @@ fun List<String>.withCoords() =
 
 infix fun Int.exclProgressionTo(b: Int) = if (this > b) (this - 1) downTo (b + 1) else (this + 1)..<b
 
+fun List<String>.transpose() =
+    first().indices.map { x ->
+        this.indices.map { y ->
+            get(x to y)
+        }.joinToString(separator = "")
+    }
+
+fun <T> Iterable<T>.indicesOf(predicate: (T) -> Boolean) =
+    withIndex().filter { (_, value) -> predicate(value) }.map { (index, _) -> index }
+
+fun <T> Sequence<T>.indicesOf(predicate: (T) -> Boolean) =
+    withIndex().filter { (_, value) -> predicate(value) }.map { (index, _) -> index }
+
+fun <T> Collection<T>.replace(i: Int, newValue: T): List<T> = require(i in indices).let { take(i) + newValue + drop(i + 1) }
+fun String.replace(i: Int, newValue: Char) : String = require(i in indices).let { take(i) + newValue + drop(i + 1) }
+
+infix fun String.countDifferentCharacters(to: String) = require(this.length == to.length).let { zip(to).count { (l, r) -> l != r } }
+
 fun debugPrint(data: Collection<Collection<Any?>>) {
     data.forEach { row ->
         row.forEach(::print)

@@ -52,6 +52,9 @@ fun List<String>.transpose() =
         }.joinToString(separator = "")
     }
 
+fun String.indicesOf(predicate: (Char) -> Boolean) =
+    withIndex().filter { (_, value) -> predicate(value) }.map { (index, _) -> index }
+
 fun <T> Iterable<T>.indicesOf(predicate: (T) -> Boolean) =
     withIndex().filter { (_, value) -> predicate(value) }.map { (index, _) -> index }
 
@@ -64,6 +67,14 @@ fun String.replace(i: Int, newValue: Char) : String = require(i in indices).let 
 infix fun String.countDifferentCharacters(to: String) = require(this.length == to.length).let { zip(to).count { (l, r) -> l != r } }
 
 fun debugPrint(data: Collection<Collection<Any?>>) {
+    data.forEach { row ->
+        row.forEach(::print)
+        println()
+    }
+}
+
+@JvmName("debugPrintString")
+fun debugPrint(data: Collection<String>) {
     data.forEach { row ->
         row.forEach(::print)
         println()

@@ -11,14 +11,14 @@ abstract class PuzzleTest {
     protected open val expectedSampleResultPart2: Any get() = TODO("Provide sample result for part 2")
     protected open val expectedSampleResultsPart2: List<Any> get() = listOf(expectedSampleResultPart2)
 
-    private fun readFile(fileName: String): String? = this::class.java.getResource(fileName)?.readText()
-    private fun readFileOrThrow(fileName: String): String = readFile(fileName) ?: throw FileNotFoundException(fileName)
+    protected fun readFile(fileName: String): String? = this::class.java.getResource(fileName)?.readText()
+    protected fun readFileOrThrow(fileName: String): String = readFile(fileName) ?: throw FileNotFoundException(fileName)
 
     private val name = this::class.simpleName!!.lowercase().removeSuffix("test")
-    private fun getInputFileName(sample: Boolean = false, part: Int? = null, sampleNumber: Int? = null) =
+    protected fun getInputFileName(sample: Boolean = false, part: Int? = null, sampleNumber: Int? = null) =
         "$name${if (sample) "sample" else ""}${part ?: ""}${(sampleNumber?.takeIf { part != null }) ?: ""}.txt"
 
-    fun readSampleInput(part: Int, sampleIndex: Int) =
+    protected open fun readSampleInput(part: Int, sampleIndex: Int) =
         readFile(getInputFileName(true, part, sampleIndex + 1))
             ?: readFile(getInputFileName(true, part))
             ?: readFileOrThrow(getInputFileName(true))

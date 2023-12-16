@@ -6,12 +6,18 @@ inline val Coord.x get() = first
 inline val Coord.y get() = second
 
 fun List<String>.getOrNull(pos: Coord): Char? = getOrNull(pos.y)?.getOrNull(pos.x)
+fun <T> List<List<T>>.getOrNull(pos: Coord): T? = getOrNull(pos.y)?.getOrNull(pos.x)
 infix fun Coord.isWithinRangeOf(area: List<String>): Boolean = y in area.indices && x in area[y].indices
 operator fun List<String>.get(pos: Coord): Char = get(pos.y)[pos.x]
+
+operator fun <T> List<MutableList<T>>.set(coord: Pair<Int, Int>, value: T) {
+    this[coord.y][coord.x] = value
+}
 
 operator fun Coord.plus(other: Coord): Coord = x + other.x to y + other.y
 operator fun Coord.minus(other: Coord): Coord = x - other.x to y - other.y
 operator fun Coord.times(t: Int) = x * t to y * t
+operator fun Coord.unaryMinus() = -x to -y
 
 val LEFT = -1 to 0
 val RIGHT = 1 to 0
@@ -21,6 +27,11 @@ val LEFT_UP = -1 to -1
 val LEFT_DOWN = -1 to 1
 val RIGHT_UP = 1 to -1
 val RIGHT_DOWN = 1 to 1
+
+val NORTH = UP
+val SOUTH = DOWN
+val WEST = LEFT
+val EAST = RIGHT
 
 val Coord.left get() = this + LEFT
 val Coord.right get() = this + RIGHT
@@ -43,6 +54,23 @@ fun List<String>.withCoords() =
         }
     }
 
+@JvmName("listWithCoords")
+fun <T> List<List<T>>.withCoords() =
+    flatMapIndexed { y: Int, row: List<T> ->
+        row.mapIndexed { x: Int, value: T ->
+            (x to y) to value
+        }
+    }
+
+fun List<String>.coordsOf(predicate: (Char) -> Boolean) =
+    withCoords().filter { (_, value) -> predicate(value) }.map { (coord, _) -> coord }
+
+@JvmName("listCoordsOf")
+fun <T> List<List<T>>.coordsOf(predicate: (T) -> Boolean) =
+    withCoords().filter { (_, value) -> predicate(value) }.map { (coord, _) -> coord }
+
+infix fun Coord.step(direction: Coord) = generateSequence(this) { it + direction }
+
 infix fun Int.exclProgressionTo(b: Int) = if (this > b) (this - 1) downTo (b + 1) else (this + 1)..<b
 
 fun List<String>.transpose() =
@@ -51,6 +79,9 @@ fun List<String>.transpose() =
             get(x to y)
         }.joinToString(separator = "")
     }
+
+fun List<String>.toMutableCharList() = map { it.toMutableList() }.toMutableList()
+fun List<String>.toList() = map { it.toList() }
 
 fun String.indicesOf(predicate: (Char) -> Boolean) =
     withIndex().filter { (_, value) -> predicate(value) }.map { (index, _) -> index }
@@ -61,22 +92,18 @@ fun <T> Iterable<T>.indicesOf(predicate: (T) -> Boolean) =
 fun <T> Sequence<T>.indicesOf(predicate: (T) -> Boolean) =
     withIndex().filter { (_, value) -> predicate(value) }.map { (index, _) -> index }
 
-fun <T> Collection<T>.replace(i: Int, newValue: T): List<T> = require(i in indices).let { take(i) + newValue + drop(i + 1) }
-fun String.replace(i: Int, newValue: Char) : String = require(i in indices).let { take(i) + newValue + drop(i + 1) }
+fun <T> List<T>.replace(i: Int, newValue: T): List<T> = require(i in indices).let { take(i) + newValue + drop(i + 1) }
+fun String.replace(i: Int, newValue: Char): String = require(i in indices).let { take(i) + newValue + drop(i + 1) }
 
 infix fun String.countDifferentCharacters(to: String) = require(this.length == to.length).let { zip(to).count { (l, r) -> l != r } }
 
-fun debugPrint(data: Collection<Collection<Any?>>) {
-    data.forEach { row ->
-        row.forEach(::print)
-        println()
-    }
+fun <T> List<List<T>>.debugPrint() = onEach { row ->
+    row.forEach(::print)
+    println()
 }
 
 @JvmName("debugPrintString")
-fun debugPrint(data: Collection<String>) {
-    data.forEach { row ->
-        row.forEach(::print)
-        println()
-    }
+fun List<String>.debugPrint() = onEach { row ->
+    row.forEach(::print)
+    println()
 }

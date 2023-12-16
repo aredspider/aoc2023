@@ -44,6 +44,10 @@ val Coord.rightDown get() = this + RIGHT_DOWN
 
 val Coord.adjacent get() = listOf(left, right, up, down, leftUp, leftDown, rightUp, rightDown)
 val Coord.inverted get() = -x to -y
+val Coord.ccw get() = y to -x
+val Coord.cw get() = -y to x
+val Coord.isUpOrDown get() = x == 0
+val Coord.isLeftOrRight get() = y == 0
 
 fun Coord.manhattanDistance(to: Coord) = (x - to.x).absoluteValue + (y - to.y).absoluteValue
 
@@ -61,6 +65,10 @@ fun <T> List<List<T>>.withCoords() =
             (x to y) to value
         }
     }
+
+val List<String>.width get() = first().length
+val List<String>.height get() = size
+val List<String>.bottomRight get() = last().length - 1 to size - 1
 
 fun List<String>.coordsOf(predicate: (Char) -> Boolean) =
     withCoords().filter { (_, value) -> predicate(value) }.map { (coord, _) -> coord }

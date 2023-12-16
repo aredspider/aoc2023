@@ -105,6 +105,15 @@ fun String.replace(i: Int, newValue: Char): String = require(i in indices).let {
 
 infix fun String.countDifferentCharacters(to: String) = require(this.length == to.length).let { zip(to).count { (l, r) -> l != r } }
 
+fun <T> Sequence<T>.takeUntil(predicate: (T) -> Boolean) = sequence {
+    this@takeUntil.forEach {
+        yield(it)
+        if (predicate(it)) return@sequence
+    }
+}
+
+val Sequence<Any?>.indices get() = mapIndexed { index, _ -> index }
+
 fun <T> List<List<T>>.debugPrint() = onEach { row ->
     row.forEach(::print)
     println()

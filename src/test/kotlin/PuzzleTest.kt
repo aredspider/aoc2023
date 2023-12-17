@@ -34,7 +34,7 @@ abstract class PuzzleTest {
         }
 
     @TestFactory
-    open fun testSamplePart2() =
+    open fun testSamplesPart2() =
         expectedSampleResultsPart2.mapIndexed { sampleIndex, expected ->
             dynamicTest("Part 2 Sample ${sampleIndex + 1}") {
                 assertThat(puzzle.part2(readSampleInput(part = 2, sampleIndex))).isEqualTo(expected)

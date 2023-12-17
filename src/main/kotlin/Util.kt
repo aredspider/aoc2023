@@ -8,7 +8,10 @@ inline val Coord.y get() = second
 fun List<String>.getOrNull(pos: Coord): Char? = getOrNull(pos.y)?.getOrNull(pos.x)
 fun <T> List<List<T>>.getOrNull(pos: Coord): T? = getOrNull(pos.y)?.getOrNull(pos.x)
 infix fun Coord.isWithinRangeOf(area: List<String>): Boolean = y in area.indices && x in area[y].indices
+@JvmName("listIsWithinRangeOf")
+infix fun Coord.isWithinRangeOf(area: List<List<*>>): Boolean = y in area.indices && x in area[y].indices
 operator fun List<String>.get(pos: Coord): Char = get(pos.y)[pos.x]
+operator fun <T> List<List<T>>.get(pos: Coord): T = get(pos.y)[pos.x]
 
 operator fun <T> List<MutableList<T>>.set(coord: Pair<Int, Int>, value: T) {
     this[coord.y][coord.x] = value
@@ -32,6 +35,8 @@ val NORTH = UP
 val SOUTH = DOWN
 val WEST = LEFT
 val EAST = RIGHT
+
+val UP_RIGHT_DOWN_LEFT = listOf(UP, RIGHT, DOWN, LEFT)
 
 val Coord.left get() = this + LEFT
 val Coord.right get() = this + RIGHT
@@ -67,8 +72,13 @@ fun <T> List<List<T>>.withCoords() =
     }
 
 val List<String>.width get() = first().length
-val List<String>.height get() = size
+val List<*>.height get() = size
 val List<String>.bottomRight get() = last().length - 1 to size - 1
+
+@get:JvmName("listWidth")
+val List<List<*>>.width get() = first().size
+@get:JvmName("listBottomRight")
+val List<List<*>>.bottomRight get() = last().size - 1 to size - 1
 
 fun List<String>.coordsOf(predicate: (Char) -> Boolean) =
     withCoords().filter { (_, value) -> predicate(value) }.map { (coord, _) -> coord }

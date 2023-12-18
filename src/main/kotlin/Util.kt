@@ -1,13 +1,17 @@
 import kotlin.math.absoluteValue
 
 typealias Coord = Pair<Int, Int>
+typealias LCoord = Pair<Long, Long>
 
 inline val Coord.x get() = first
 inline val Coord.y get() = second
+inline val LCoord.x get() = first
+inline val LCoord.y get() = second
 
 fun List<String>.getOrNull(pos: Coord): Char? = getOrNull(pos.y)?.getOrNull(pos.x)
 fun <T> List<List<T>>.getOrNull(pos: Coord): T? = getOrNull(pos.y)?.getOrNull(pos.x)
 infix fun Coord.isWithinRangeOf(area: List<String>): Boolean = y in area.indices && x in area[y].indices
+
 @JvmName("listIsWithinRangeOf")
 infix fun Coord.isWithinRangeOf(area: List<List<*>>): Boolean = y in area.indices && x in area[y].indices
 operator fun List<String>.get(pos: Coord): Char = get(pos.y)[pos.x]
@@ -21,6 +25,16 @@ operator fun Coord.plus(other: Coord): Coord = x + other.x to y + other.y
 operator fun Coord.minus(other: Coord): Coord = x - other.x to y - other.y
 operator fun Coord.times(t: Int) = x * t to y * t
 operator fun Coord.unaryMinus() = -x to -y
+operator fun Coord.times(t: Long) = x * t to y * t
+
+@JvmName("LCoordPlus")
+operator fun LCoord.plus(other: LCoord): LCoord = x + other.x to y + other.y
+@JvmName("LCoordMinus")
+operator fun LCoord.minus(other: LCoord): LCoord = x - other.x to y - other.y
+@JvmName("LCoordTimes")
+operator fun LCoord.times(t: Long) = x * t to y * t
+@JvmName("LCoordUnaryMinus")
+operator fun LCoord.unaryMinus() = -x to -y
 
 val LEFT = -1 to 0
 val RIGHT = 1 to 0
@@ -77,6 +91,7 @@ val List<String>.bottomRight get() = last().length - 1 to size - 1
 
 @get:JvmName("listWidth")
 val List<List<*>>.width get() = first().size
+
 @get:JvmName("listBottomRight")
 val List<List<*>>.bottomRight get() = last().size - 1 to size - 1
 

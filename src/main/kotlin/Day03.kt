@@ -12,7 +12,7 @@ object Day03 : Puzzle {
     override fun part1(input: List<String>) = input.flatMapIndexed { y: Int, line: String ->
         line.flatMapIndexed { x, c ->
             if (!c.isDigit() && c != '.')
-                (x to y).adjacent.filter { input.getOrNull(it)?.isDigit() == true }.map { pos -> input[pos.y].parsePart(pos) }
+                (x to y).adjacent8.filter { input.getOrNull(it)?.isDigit() == true }.map { pos -> input[pos.y].parsePart(pos) }
             else
                 emptyList()
         }
@@ -23,7 +23,7 @@ object Day03 : Puzzle {
     override fun part2(input: List<String>) = input.flatMapIndexed { y: Int, line: String ->
         line.mapIndexedNotNull { x, c ->
             if (c == '*') {
-                val adjacentParts = (x to y).adjacent.filter { input.getOrNull(it)?.isDigit() == true }
+                val adjacentParts = (x to y).adjacent8.filter { input.getOrNull(it)?.isDigit() == true }
                     .map { pos -> input[pos.y].parsePart(pos) }.distinct()
                 if (adjacentParts.size == 2)
                     adjacentParts[0].number * adjacentParts[1].number

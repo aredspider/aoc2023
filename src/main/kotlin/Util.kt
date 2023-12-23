@@ -61,7 +61,16 @@ val Coord.leftDown get() = this + LEFT_DOWN
 val Coord.rightUp get() = this + RIGHT_UP
 val Coord.rightDown get() = this + RIGHT_DOWN
 
-val Coord.adjacent get() = listOf(left, right, up, down, leftUp, leftDown, rightUp, rightDown)
+val Char.arrowDirOrNull get() = when (this) {
+    '^' -> UP
+    'v' -> DOWN
+    '<' -> LEFT
+    '>' -> RIGHT
+    else -> null
+}
+
+val Coord.adjacent8 get() = listOf(left, right, up, down, leftUp, leftDown, rightUp, rightDown)
+val Coord.adjacent4 get() = listOf(left, right, up, down)
 val Coord.inverted get() = -x to -y
 val Coord.ccw get() = y to -x
 val Coord.cw get() = -y to x

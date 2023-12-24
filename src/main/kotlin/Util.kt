@@ -11,6 +11,7 @@ inline val LCoord.y get() = second
 fun List<String>.getOrNull(pos: Coord): Char? = getOrNull(pos.y)?.getOrNull(pos.x)
 fun <T> List<List<T>>.getOrNull(pos: Coord): T? = getOrNull(pos.y)?.getOrNull(pos.x)
 infix fun Coord.isWithinRangeOf(area: List<String>): Boolean = y in area.indices && x in area[y].indices
+infix fun Coord.mod(area: List<String>) : Coord = this mod area.size2
 
 @JvmName("listIsWithinRangeOf")
 infix fun Coord.isWithinRangeOf(area: List<List<*>>): Boolean = y in area.indices && x in area[y].indices
@@ -26,6 +27,7 @@ operator fun Coord.minus(other: Coord): Coord = x - other.x to y - other.y
 operator fun Coord.times(t: Int) = x * t to y * t
 operator fun Coord.unaryMinus() = -x to -y
 operator fun Coord.times(t: Long) = x * t to y * t
+infix fun Coord.mod(other: Coord) = x.mod(other.x) to y.mod(other.y)
 
 @JvmName("LCoordPlus")
 operator fun LCoord.plus(other: LCoord): LCoord = x + other.x to y + other.y
@@ -96,6 +98,7 @@ fun <T> List<List<T>>.withCoords() =
 
 val List<String>.width get() = first().length
 val List<*>.height get() = size
+val List<String>.size2 get() = last().length to size
 val List<String>.bottomRight get() = last().length - 1 to size - 1
 
 @get:JvmName("listWidth")

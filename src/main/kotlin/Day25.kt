@@ -1,67 +1,41 @@
-import java.util.LinkedList
-import java.util.Queue
-
 object Day25 : Puzzle {
-    private fun Map<String, Set<String>>.getAllConnectedNodes(node: String): Set<String> {
-        val q: Queue<String> = LinkedList()
-        q.add(node)
-        val visited = mutableSetOf<String>()
-        while (q.isNotEmpty()) {
-            val current = q.poll()
-            if (visited.add(current))
-                q.addAll(getValue(current))
+    class Graph(val nodes: MutableSet<String> = mutableSetOf(), val edges: MutableList<Pair<String, String>> = mutableListOf()) {
+        private fun edges(n: String) = edges.filter { (a, b) -> n == a || n == b }.toSet()
+        private fun neighbours(n: String) = edges.mapNotNull { (a, b) -> if (n == a) b else if (n == b) a else null }
+        fun copy() = Graph(nodes.toMutableSet(), edges.toMutableList())
+
+        private fun removeNode(n: String) {
+            nodes.remove(n)
+            edges -= edges(n)
         }
-        return visited
+
+        fun mergeNodes(a: String, b: String) {
+            val n = a + b
+            nodes += n
+            edges += (neighbours(a) + neighbours(b)).map { n to it }
+            removeNode(a)
+            removeNode(b)
+        }
     }
-
-    private fun Map<String, Set<String>>.biPartition(): Pair<Set<String>, Set<String>>? {
-        val a = getAllConnectedNodes(keys.first())
-        if(a.size == keys.size)
-            return null
-        val b = getAllConnectedNodes(keys.first { it !in a })
-        return (a to b).takeIf { a.size + b.size == keys.size }
-    }
-
-    private fun Map<String, Set<String>>.minusEdges(vararg edges: Pair<String, String>): Map<String, Set<String>> =
-        toMutableMap().also {
-            edges.forEach { (a, b) ->
-                it[a] = it.getValue(a).minus(b)
-                it[b] = it.getValue(b).minus(a)
-            }
-        }
-
-    private fun Map<String, Set<String>>.edges(): List<Pair<String, String>> =
-        keys.flatMap { a ->
-            getValue(a).map { b ->
-                a to b
-            }
-        }
 
     override fun part1(input: List<String>): Any {
-        val aGraph: Map<String, MutableSet<String>> = input.associate {
+        val oGraph = Graph()
+        input.forEach {
             val (name, neighbours) = it.split(": ")
-            name to neighbours.split(" ").toMutableSet()
-        }
-
-        val dGraph = aGraph.toMutableMap()
-        aGraph.forEach { (name, neighbours) ->
-            neighbours.forEach { neighbour ->
-                dGraph.getOrPut(neighbour, ::mutableSetOf).add(name)
+            oGraph.nodes += name
+            neighbours.split(" ").forEach { neighbour ->
+                oGraph.edges += name to neighbour
             }
         }
 
-        val edges = dGraph.edges().withIndex()
-
-        edges.forEach { (i, ab) ->
-            edges.drop(i + 1).forEach { (j, cd) ->
-                edges.drop(j + 1).forEach { (_, ef) ->
-                    dGraph.minusEdges(ab, cd, ef).biPartition()?.let { (a, b) ->
-                        return a.size * b.size
-                    }
-                }
+        while(true) {
+            val graph = oGraph.copy()
+            while (graph.nodes.size > 2) {
+                val (a, b) = graph.edges.random()
+                graph.mergeNodes(a, b)
             }
+            if (graph.edges.size == 3)
+                return graph.nodes.toList().let { (groupA, group) -> groupA.length * group.length / 9 }
         }
-
-        error("No solution found")
     }
 }

@@ -71,6 +71,8 @@ object Day20 : Puzzle {
         println("$source -${if(signal == LOW) "low" else "high"}-> $destination")
     }
 
+    private fun String.moduleNameFromWiring() = if(this == "broadcaster") this else drop(1)
+
     private fun List<String>.parseModules(): Map<String, Module<*>> {
         val unparsedModules = map { line ->
             val (module, outputs) = line.split(" -> ")
@@ -78,10 +80,10 @@ object Day20 : Puzzle {
         }
 
         fun findSources(moduleName: String): Set<String> =
-            unparsedModules.mapNotNull { (sourceName, sourceOutputs) -> sourceName.takeIf { moduleName in sourceOutputs }?.drop(1) }.toSet()
+            unparsedModules.mapNotNull { (sourceName, sourceOutputs) -> sourceName.takeIf { moduleName in sourceOutputs }?.moduleNameFromWiring() }.toSet()
 
         val modules = unparsedModules.associate { (module, outputs) ->
-            val moduleName = module.takeIf { it == "broadcaster" } ?: module.drop(1)
+            val moduleName = module.moduleNameFromWiring()
             moduleName to when (module.first()) {
                 'b' -> Broadcast(outputs)
                 '%' -> FlipFlop(sources = findSources(moduleName), outputs = outputs)

@@ -25,11 +25,8 @@ object Day08 : Puzzle {
                     }
                 }
         }
-        return cycleLengths.lowestCommonMultiple()
+        return cycleLengths.lcm()
     }
-
-    private fun List<Long>.lowestCommonMultiple() = reduce { acc, i -> acc * i / acc.gcd(i) }
-    private fun Long.gcd(other: Long): Long = if (other == 0L) this else other.gcd(this % other)
 
     private fun List<String>.parseInput(): Pair<List<Int>, Map<String, List<String>>> {
         val instructions = first().map {

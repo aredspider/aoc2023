@@ -11,7 +11,7 @@ inline val LCoord.y get() = second
 fun List<String>.getOrNull(pos: Coord): Char? = getOrNull(pos.y)?.getOrNull(pos.x)
 fun <T> List<List<T>>.getOrNull(pos: Coord): T? = getOrNull(pos.y)?.getOrNull(pos.x)
 infix fun Coord.isWithinRangeOf(area: List<String>): Boolean = y in area.indices && x in area[y].indices
-infix fun Coord.mod(area: List<String>) : Coord = this mod area.size2
+infix fun Coord.mod(area: List<String>): Coord = this mod area.size2
 
 @JvmName("listIsWithinRangeOf")
 infix fun Coord.isWithinRangeOf(area: List<List<*>>): Boolean = y in area.indices && x in area[y].indices
@@ -31,10 +31,13 @@ infix fun Coord.mod(other: Coord) = x.mod(other.x) to y.mod(other.y)
 
 @JvmName("LCoordPlus")
 operator fun LCoord.plus(other: LCoord): LCoord = x + other.x to y + other.y
+
 @JvmName("LCoordMinus")
 operator fun LCoord.minus(other: LCoord): LCoord = x - other.x to y - other.y
+
 @JvmName("LCoordTimes")
 operator fun LCoord.times(t: Long) = x * t to y * t
+
 @JvmName("LCoordUnaryMinus")
 operator fun LCoord.unaryMinus() = -x to -y
 
@@ -63,13 +66,14 @@ val Coord.leftDown get() = this + LEFT_DOWN
 val Coord.rightUp get() = this + RIGHT_UP
 val Coord.rightDown get() = this + RIGHT_DOWN
 
-val Char.arrowDirOrNull get() = when (this) {
-    '^' -> UP
-    'v' -> DOWN
-    '<' -> LEFT
-    '>' -> RIGHT
-    else -> null
-}
+val Char.arrowDirOrNull
+    get() = when (this) {
+        '^' -> UP
+        'v' -> DOWN
+        '<' -> LEFT
+        '>' -> RIGHT
+        else -> null
+    }
 
 val Coord.adjacent8 get() = listOf(left, right, up, down, leftUp, leftDown, rightUp, rightDown)
 val Coord.adjacent4 get() = listOf(left, right, up, down)
@@ -161,3 +165,12 @@ fun List<String>.debugPrint() = onEach { row ->
     row.forEach(::print)
     println()
 }
+
+fun List<Long>.lcm() = reduce { acc, n -> (acc * n).absoluteValue / (acc gcd n) }
+infix fun Long.lcm(other: Long) = (this * other).absoluteValue / (this gcd other)
+infix fun Long.gcd(other: Long): Long = if (other == 0L) this else other gcd (this % other)
+fun crt(values: List<Pair<Long, Long>>): Pair<Long, Long>? =
+    values.reduceOrNull { (result, lcm), (a, n) ->
+        val t = a % n
+        ((0L..<n).asSequence().map { result + lcm * it }.firstOrNull { it % n == t } ?: return null) to (lcm lcm n)
+    }

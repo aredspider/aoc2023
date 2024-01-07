@@ -174,3 +174,5 @@ fun crt(values: List<Pair<Long, Long>>): Pair<Long, Long>? =
         val t = a % n
         ((0L..<n).asSequence().map { result + lcm * it }.firstOrNull { it % n == t } ?: return null) to (lcm lcm n)
     }
+
+fun List<Int>.derive() = zipWithNext().map { (a, b) -> b - a }

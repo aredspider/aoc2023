@@ -1,12 +1,18 @@
 import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
 
 typealias Coord = Pair<Int, Int>
 typealias LCoord = Pair<Long, Long>
+typealias Coord3 = Triple<Long, Long, Long>
 
 inline val Coord.x get() = first
 inline val Coord.y get() = second
 inline val LCoord.x get() = first
 inline val LCoord.y get() = second
+inline val Coord3.x get() = first
+inline val Coord3.y get() = second
+inline val Coord3.z get() = third
 
 fun List<String>.getOrNull(pos: Coord): Char? = getOrNull(pos.y)?.getOrNull(pos.x)
 fun <T> List<List<T>>.getOrNull(pos: Coord): T? = getOrNull(pos.y)?.getOrNull(pos.x)
@@ -120,6 +126,9 @@ fun <T> List<List<T>>.coordsOf(predicate: (T) -> Boolean) =
 
 infix fun Coord.step(direction: Coord) = generateSequence(this) { it + direction }
 
+fun min(a: Coord3, b: Coord3) = Triple(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z))
+fun max(a: Coord3, b: Coord3) = Triple(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z))
+
 infix fun Int.exclProgressionTo(b: Int) = if (this > b) (this - 1) downTo (b + 1) else (this + 1)..<b
 
 fun List<String>.transpose() =
@@ -129,6 +138,7 @@ fun List<String>.transpose() =
         }.joinToString(separator = "")
     }
 
+fun <T> List<T>.countIndexed(predicate: (Int, T) -> Boolean) = withIndex().count { (index, value) -> predicate(index, value) }
 fun List<String>.toMutableCharList() = map { it.toMutableList() }.toMutableList()
 fun List<String>.toList() = map { it.toList() }
 

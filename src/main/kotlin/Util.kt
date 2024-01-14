@@ -5,6 +5,8 @@ import kotlin.math.min
 typealias Coord = Pair<Int, Int>
 typealias LCoord = Pair<Long, Long>
 typealias Coord3 = Triple<Long, Long, Long>
+typealias DCoord = Pair<Double, Double>
+typealias DCoord3 = Triple<Double, Double, Double>
 
 inline val Coord.x get() = first
 inline val Coord.y get() = second
@@ -13,6 +15,11 @@ inline val LCoord.y get() = second
 inline val Coord3.x get() = first
 inline val Coord3.y get() = second
 inline val Coord3.z get() = third
+inline val DCoord.x get() = first
+inline val DCoord.y get() = second
+inline val DCoord3.x get() = first
+inline val DCoord3.y get() = second
+inline val DCoord3.z get() = third
 
 fun List<String>.getOrNull(pos: Coord): Char? = getOrNull(pos.y)?.getOrNull(pos.x)
 fun <T> List<List<T>>.getOrNull(pos: Coord): T? = getOrNull(pos.y)?.getOrNull(pos.x)

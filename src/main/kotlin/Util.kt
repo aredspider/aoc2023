@@ -193,3 +193,26 @@ fun crt(values: List<Pair<Long, Long>>): Pair<Long, Long>? =
     }
 
 fun List<Int>.derive() = zipWithNext().map { (a, b) -> b - a }
+
+typealias Matrix = List<List<Double>>
+
+fun vec(vararg values: Double): Matrix = values.map(::listOf)
+
+val Matrix.rowSize: Int get() = size
+val Matrix.colSize: Int get() = first().size
+fun Matrix.row(i: Int): List<Double> = this[i]
+fun Matrix.col(j: Int): List<Double> = map { it[j] }
+operator fun Matrix.times(other: Matrix): Matrix = require(colSize == other.rowSize).let { (0..<rowSize).map { i -> (0..<other.colSize).map { j -> row(i).zip(other.col(j)).sumOf { (a, b) -> a * b } } } }
+operator fun Matrix.times(constant: Double): Matrix = map { row -> row.map { it * constant } }
+operator fun Matrix.div(constant: Double): Matrix = map { row -> row.map { it / constant } }
+fun Matrix.debugPrint() = println(joinToString(prefix = "{", postfix = "}", separator = ",") { row -> row.joinToString(prefix = "{", postfix = "}", separator = ",", transform = Double::toString) })
+fun Matrix.mapWithIndexAndValue(cb: (i: Int, j: Int, value: Double) -> Double): Matrix = mapIndexed { i, row -> row.mapIndexed { j, value -> cb(i, j, value) } }
+
+fun Matrix.inverse(): Matrix = adjugate() / determinant()
+fun Matrix.adjugate(): Matrix = cofactors().transpose()
+@JvmName("matrixTranspose")
+fun Matrix.transpose(): Matrix = (0..<colSize).map { i -> (0..<rowSize).map { j -> this[j][i] } }
+fun Matrix.subMatrix(i: Int, j: Int): Matrix = filterIndexed { row, _ -> row != i }.map { it.filterIndexed { col, _ -> col != j } }
+fun Matrix.determinant(): Double = require(rowSize == colSize) { "Matrix is not square" }.let { if (rowSize == 1) this[0][0] else col(0).mapIndexed { i, v -> v * cofactor(i, 0) }.sum() }
+fun Matrix.cofactors(): Matrix = mapWithIndexAndValue { i, j, _ -> cofactor(i, j) }
+fun Matrix.cofactor(i: Int, j: Int): Double = subMatrix(i, j).determinant().let { if ((i + j) % 2 == 0) it else -it }
